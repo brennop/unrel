@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 
 const instanceUrl = "https://inv.riverside.rocks";
@@ -28,17 +28,46 @@ function handleSearch() {
   loading.value = true;
   instance
     .get(
-      `api/v1/search?q=${query.value}&type=video&fields=title,author,videoId,lengthSeconds,publishedText`
+      `api/v1/search?q=${query.value}&type=video&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
     )
     .then((response) => (data.value = response.data))
     .finally(() => (loading.value = false));
 }
 
-watch(current, () => player.value.load());
+watch(current, (value) => {
+  if (!value) return;
+
+  player.value.load();
+
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: value.title,
+      artist: value.author,
+      artwork: [
+        { src: `${instanceUrl}/vi/${value.videoId}/default.jpg`, sizes: '120x90', type: 'image/png' },
+        { src: `${instanceUrl}/vi/${value.videoId}/medium.jpg`, sizes: '320x180', type: 'image/png' },
+        { src: `${instanceUrl}/vi/${value.videoId}/high.jpg`, sizes: '480x360', type: 'image/png' },
+      ]
+    });
+
+    // TODO: Update playback state.
+  }
+});
 
 function handleError() {
+  // TODO: switch to local when 403
   console.log("")
 }
+
+onMounted(() => {
+  loading.value = true;
+  instance
+    .get(
+      `api/v1/trending?type=Music&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
+    )
+    .then((response) => (data.value = response.data))
+    .finally(() => (loading.value = false));
+})
 </script>
 
 <template>
@@ -71,18 +100,19 @@ function handleError() {
       </div>
       <audio controls autoplay ref="player" class="w-full mt-4">
         <template v-if="current">
-          <source 
-            @error="handleError"
-            :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=139`"
-            type='audio/mp4; codecs="mp4a.40.5"' label="50281k" />
-          <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=140`"
-            type='audio/mp4; codecs="mp4a.40.2"' label="130708k" />
-          <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=249`" type='audio/webm; codecs="opus"'
-            label="54870k" />
-          <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=250`" type='audio/webm; codecs="opus"'
-            label="70731k" />
-          <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=251`" type='audio/webm; codecs="opus"'
-            label="136432k" />
+          <template v-for="local in [false, true]">
+            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=140&local=${local}`"
+              type='audio/mp4; codecs="mp4a.40.2"' label="130708k" />
+            <source @error="handleError"
+              :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=139&local=${local}`"
+              type='audio/mp4; codecs="mp4a.40.5"' label="50281k" />
+            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=251&local=${local}`"
+              type='audio/webm; codecs="opus"' label="136432k" />
+            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=250&local=${local}`"
+              type='audio/webm; codecs="opus"' label="70731k" />
+            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=249&local=${local}`"
+              type='audio/webm; codecs="opus"' label="54870k" />
+          </template>
         </template>
       </audio>
     </div>
