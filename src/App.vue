@@ -50,6 +50,7 @@ watch(current, (value) => {
       ]
     });
 
+
     // TODO: Update playback state.
   }
 });
@@ -67,6 +68,17 @@ onMounted(() => {
     )
     .then((response) => (data.value = response.data))
     .finally(() => (loading.value = false));
+
+  if (navigator.vendor == "Apple Computer, Inc.") {
+    player.value.addEventListener('loadedmetadata', function () {
+      player.value.addEventListener('timeupdate', function () {
+        const remaining = player.value.duration - player.value.currentTime;
+        if (remaining < player.value.duration / 2 && remaining >= 2) {
+          player.value.currentTime = player.value.duration - 1;
+        }
+      });
+    });
+  }
 })
 </script>
 
