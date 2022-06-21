@@ -81,7 +81,7 @@ onMounted(() => {
     <ul class="overflow-y-auto flex-1">
       <li v-for="item in data" :key="item.videoId" class="border-b border-slate-200 hover:bg-gray-50 cursor-default">
         <button @click="current = item" class="flex items-center w-full px-6 py-2">
-          <img :src="`${instanceUrl}/vi/${item.videoId}/mqdefault.jpg`" class="w-24 h-14 rounded-lg object-cover " />
+          <img :src="`${instanceUrl}/vi/${item.videoId}/mqdefault.jpg`" class="w-14 h-14 rounded-lg object-cover " />
           <div class="flex flex-col items-start ml-4 flex-1 w-0">
             <span class="font-semibold text-gray-900 text-left">{{ item.title }}</span>
             <span class="font-normal text-gray-700">{{ item.author }}</span>
@@ -92,7 +92,7 @@ onMounted(() => {
     </ul>
     <div class="p-4 text-lg flex flex-col border-t border-slate-200 bg-gray-200 rounded-t-lg">
       <div class="flex items-center" v-if="current">
-        <img :src="`${instanceUrl}/vi/${current.videoId}/mqdefault.jpg`" class="w-28 h-16 rounded-lg object-cover " />
+        <img :src="`${instanceUrl}/vi/${current.videoId}/mqdefault.jpg`" class="w-16 h-16 rounded-lg object-cover " />
         <div class="flex flex-col ml-4 flex-1 w-0">
           <span class="font-medium text-gray-900 truncate">{{ current.title }}</span>
           <span class="font-normal text-gray-700">{{ current.author }}</span>
@@ -101,17 +101,11 @@ onMounted(() => {
       <audio controls autoplay ref="player" class="w-full mt-4">
         <template v-if="current">
           <template v-for="local in [false, true]">
-            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=140&local=${local}`"
-              type='audio/mp4; codecs="mp4a.40.2"' label="130708k" />
             <source @error="handleError"
-              :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=139&local=${local}`"
-              type='audio/mp4; codecs="mp4a.40.5"' label="50281k" />
+              :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=140&local=${local}`"
+              type='audio/mp4; codecs="mp4a.40.2"' label="130708k" />
             <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=251&local=${local}`"
               type='audio/webm; codecs="opus"' label="136432k" />
-            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=250&local=${local}`"
-              type='audio/webm; codecs="opus"' label="70731k" />
-            <source :src="`${instanceUrl}/latest_version?id=${current.videoId}&itag=249&local=${local}`"
-              type='audio/webm; codecs="opus"' label="54870k" />
           </template>
         </template>
       </audio>
