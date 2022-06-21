@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
 
 const instanceUrl = "https://inv.riverside.rocks";
@@ -24,7 +24,17 @@ const loading = ref(false);
 
 const current = ref<VideoItem>();
 
+const favorites = ref<VideoItem[]>(JSON.parse(localStorage.getItem("favorites")
+  ?? "[]"));
+const tab = ref<"search" | "favorites">("search");
+
+watch(favorites, (newValue) => {
+  console.log("favorites changed", newValue);
+  localStorage.setItem("favorites", JSON.stringify(newValue));
+}, { deep: true });
+
 function handleSearch() {
+  tab.value = "search";
   loading.value = true;
   instance
     .get(
@@ -52,6 +62,14 @@ watch(current, (value) => {
 
 
     // TODO: Update playback state.
+  }
+});
+
+const items = computed(() => {
+  if (tab.value === "search") {
+    return data.value;
+  } else {
+    return favorites.value;
   }
 });
 
@@ -84,15 +102,22 @@ onMounted(() => {
 
 <template>
   <div class="h-screen flex flex-col">
-    <div class="border-slate-200 border-b">
-      <form class="m-4 bg-slate-100 h-10 rounded-lg" @submit.prevent="handleSearch">
+    <div class="border-slate-200 border-b flex items-center p-4 gap-4">
+      <form class="flex-1 bg-slate-100 h-10 rounded-lg" @submit.prevent="handleSearch">
         <input class="bg-transparent p-2 outline-none w-full" v-model="query" />
       </form>
+      <button v-if="tab == 'favorites'" class="" @click="tab = 'search'">
+        💖
+      </button>
+      <button v-else @click="tab = 'favorites'">
+        🤍
+      </button>
     </div>
     <div v-if="loading">loading...</div>
     <ul class="overflow-y-auto flex-1 pb-28">
-      <li v-for="item in data" :key="item.videoId" class="border-b border-slate-200 hover:bg-gray-50 cursor-default">
-        <button @click="current = item" class="flex items-center w-full px-6 py-2">
+      <li v-for="item in items" :key="item.videoId"
+        class="flex border-b border-slate-200 hover:bg-gray-50 cursor-default px-6 py-2">
+        <button @click="current = item" class="flex items-center w-full">
           <img :src="`${instanceUrl}/vi/${item.videoId}/mqdefault.jpg`" class="w-14 h-14 rounded-lg object-cover " />
           <div class="flex flex-col items-start ml-4 flex-1 w-0">
             <span class="font-semibold text-gray-900 text-left">{{ item.title }}</span>
@@ -100,9 +125,17 @@ onMounted(() => {
             <span class="font-light text-sm text-gray-600">{{ item.publishedText }}</span>
           </div>
         </button>
+        <button v-if="favorites.find(({ videoId }) => item.videoId == videoId)" class=""
+          @click="favorites.splice(favorites.indexOf(item), 1)">
+          💖
+        </button>
+        <button v-else class="" @click="favorites.push(item)">
+          🤍
+        </button>
       </li>
     </ul>
-    <div class="absolute bottom-0 inset-x-0 p-4 text-lg flex flex-col border-t border-slate-200 bg-gray-200/80 backdrop-blur-sm rounded-t-lg">
+    <div
+      class="absolute bottom-0 inset-x-0 p-4 text-lg flex flex-col border-t border-slate-200 bg-gray-200/80 backdrop-blur-sm rounded-t-lg">
       <div class="flex items-center" v-if="current">
         <img :src="`${instanceUrl}/vi/${current.videoId}/mqdefault.jpg`" class="w-16 h-16 rounded-lg object-cover " />
         <div class="flex flex-col ml-4 flex-1 w-0">
