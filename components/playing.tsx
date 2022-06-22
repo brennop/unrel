@@ -49,11 +49,11 @@ export default function Playing() {
 
   return (
     <>
-      <button className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200/90 backdrop-blur-sm rounded-t-lg"
+      <button className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200/30 backdrop-blur-lg rounded-t-lg"
         onClick={() => setOpen(true)}
       >
         {current && (
-          <div className="p-2 flex items-center gap-2 text-gray-900">
+          <div className="p-2 flex items-center gap-2 text-gray-900 w-full">
             <img
               src={`${instanceUrl}/vi/${current?.videoId}/mqdefault.jpg`}
               className="w-12 h-12 rounded-lg object-cover"
@@ -71,7 +71,9 @@ export default function Playing() {
               onClick={handlePlay}
             >
               <PlayIcon className="w-6 h-6" /></button>}
-            {state === "loading" && <Spinner />}
+            {state === "loading" && <div className="p-2">
+              <Spinner />
+            </div>}
           </div>
         )}
         <audio controls autoPlay className="w-full mt-4 hidden" ref={player}>
