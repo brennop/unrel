@@ -53,7 +53,7 @@ export default function Playing() {
         onClick={() => setOpen(true)}
       >
         {current && (
-          <div className="p-2 flex items-center gap-2">
+          <div className="p-2 flex items-center gap-2 text-gray-900">
             <img
               src={`${instanceUrl}/vi/${current?.videoId}/mqdefault.jpg`}
               className="w-12 h-12 rounded-lg object-cover"

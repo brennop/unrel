@@ -15,16 +15,19 @@ export default function ListItem({ item }: ListItemProps) {
 
   return (
     <li
-      className={`flex border-b border-slate-200 hover:bg-gray-50 cursor-default px-6 py-2 ${current?.videoId === item.videoId ? "bg-slate-100" : ""
-        }`}
+      className={`flex border-b border-slate-200 hover:bg-gray-50 cursor-default px-2 py-1.5 
+leading-none
+${
+        current?.videoId === item.videoId ? "bg-slate-100" : ""
+      }`}
     >
       <button className="flex items-center w-full" onClick={handleSelect}>
         <img
           src={`${instanceUrl}/vi/${item.videoId}/mqdefault.jpg`}
-          className="w-14 h-14 rounded-lg object-cover "
+          className="w-12 h-12 rounded-lg object-cover "
         />
-        <div className="flex flex-col items-start ml-4 flex-1 w-0">
-          <span className="font-semibold text-gray-900 text-left">
+        <div className="flex flex-col items-start ml-2 flex-1 w-0">
+          <span className="font-semibold text-gray-900 leading-snug text-left truncate w-full overflow-y-visible">
             {item.title}
           </span>
           <span className="font-normal text-gray-700">{item.author}</span>
