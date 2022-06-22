@@ -12,3 +12,10 @@ export const getTrending = () =>
       `api/v1/trending?type=Music&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
     )
     .then((response) => response.data)
+
+export const searchVideos = (query: string) =>
+  instance
+    .get(
+      `api/v1/search?q=${query}&type=video&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
+    )
+    .then((response) => (response.data))

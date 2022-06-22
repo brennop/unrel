@@ -5,3 +5,5 @@ type VideoItem = {
   lengthSeconds: string;
   publishedText: string;
 };
+
+type State = "none" | "loading" | "playing" | "paused" | "error";

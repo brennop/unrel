@@ -1,23 +1,94 @@
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Sheet from 'react-modal-sheet';
+import { PlayIcon, PauseIcon } from "@heroicons/react/outline"
 
 import { instanceUrl } from "services/api";
 import { currentAtom } from "store/current"
+import Spinner from "./spinner";
 
 export default function Playing() {
   const [open, setOpen] = useState(false);
   const [current] = useAtom(currentAtom)
 
+  const [state, setState] = useState<State>("none");
+
+  const player = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    player.current?.load();
+
+    setState("loading")
+  }, [current])
+
+  useEffect(() => {
+    player.current?.addEventListener("load", () => {
+      setState("playing")
+    })
+
+    player.current?.addEventListener("pause", () => {
+      setState("paused");
+    })
+
+    player.current?.addEventListener("play", () => {
+      setState("playing")
+    })
+
+    // TODO: add effect cleanups
+  }, [])
+
+  const handlePause = (event) => {
+    event.stopPropagation();
+    player.current?.pause();
+  }
+
+  const handlePlay = (event) => {
+    event.stopPropagation();
+    player.current?.play();
+  }
+
   return (
     <>
-      <button className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200/80 backdrop-blur-sm rounded-t-lg"
+      <button className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200/90 backdrop-blur-sm rounded-t-lg"
         onClick={() => setOpen(true)}
       >
-        <img
-          src={`${instanceUrl}/vi/${current?.videoId}/mqdefault.jpg`}
-          className="w-16 h-16 rounded-lg object-cover "
-        />
+        {current && (
+          <div className="p-2 flex items-center gap-2">
+            <img
+              src={`${instanceUrl}/vi/${current?.videoId}/mqdefault.jpg`}
+              className="w-12 h-12 rounded-lg object-cover"
+            />
+            <span className="font-medium truncate flex-1">
+              {current.title}
+            </span>
+
+            {state === "playing" &&
+              <button className="p-2" onClick={handlePause}>
+                <PauseIcon className="w-6 h-6" />
+              </button>}
+            {state === "paused" && <button
+              className="p-2"
+              onClick={handlePlay}
+            >
+              <PlayIcon className="w-6 h-6" /></button>}
+            {state === "loading" && <Spinner />}
+          </div>
+        )}
+        <audio controls autoPlay className="w-full mt-4 hidden" ref={player}>
+          {current &&
+            ["false", "true"].map((local) => (
+              <Fragment key={local}>
+                <source
+                  src={`${instanceUrl}/latest_version?id=${current.videoId}&itag=140&local=${local}`}
+                  type='audio/mp4; codecs="mp4a.40.2"'
+                />
+                <source
+                  src={`${instanceUrl}/latest_version?id=${current.videoId}&itag=251&local=${local}`}
+                  type='audio/webm; codecs="opus"'
+                />
+              </Fragment>
+            ))}
+        </audio>
       </button>
       <Sheet isOpen={open} onClose={() => setOpen(false)}
         initialSnap={1}
@@ -40,21 +111,6 @@ export default function Playing() {
                 </div>
               </div>
             )}
-            <audio controls autoPlay className="w-full mt-4">
-              {current &&
-                ["false", "true"].map((local) => (
-                  <>
-                    <source
-                      src={`${instanceUrl}/latest_version?id=${current.videoId}&itag=140&local=${local}`}
-                      type='audio/mp4; codecs="mp4a.40.2"'
-                    />
-                    <source
-                      src={`${instanceUrl}/latest_version?id=${current.videoId}&itag=251&local=${local}`}
-                      type='audio/webm; codecs="opus"'
-                    />
-                  </>
-                ))}
-            </audio>
           </Sheet.Content>
         </Sheet.Container>
       </Sheet>
