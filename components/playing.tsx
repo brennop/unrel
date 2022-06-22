@@ -37,12 +37,12 @@ export default function Playing() {
     // TODO: add effect cleanups
   }, [])
 
-  const handlePause = (event) => {
+  const handlePause: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
     player.current?.pause();
   }
 
-  const handlePlay = (event) => {
+  const handlePlay: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.stopPropagation();
     player.current?.play();
   }
