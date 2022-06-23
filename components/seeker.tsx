@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react"
-import 'range-slider-element';
 
 type SeekerProps = {
   playerRef: React.RefObject<HTMLAudioElement>
