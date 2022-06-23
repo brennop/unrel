@@ -130,8 +130,8 @@ export default function Seeker({ playerRef }: SeekerProps) {
         </div>
       </div>
       <div className="flex justify-between">
-        <span>{formatTime(seek)}</span>
-        <span>{formatTime(duration)}</span>
+        <span className="text-gray-800 text-sm">{formatTime(seek)}</span>
+        <span className="text-gray-800 text-sm">{formatTime(duration)}</span>
       </div>
     </div>
   );

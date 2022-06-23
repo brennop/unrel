@@ -8,10 +8,14 @@ import { currentAtom } from "store/current";
 import Spinner from "./spinner";
 import Seeker from "./seeker";
 import { AnimatePresence, motion } from "framer-motion";
+import Queue from "./queue";
+import { queueAtom } from "store/queue";
 
 export default function Playing() {
+  const [queue, setQueue] = useAtom(queueAtom);
+  const [current, setCurrent] = useAtom(currentAtom);
+
   const [open, setOpen] = useState(false);
-  const [current] = useAtom(currentAtom);
 
   const [state, setState] = useState<State>("none");
 
@@ -32,6 +36,15 @@ export default function Playing() {
     event.stopPropagation();
     player.current?.play();
   };
+
+  const handleEnded = () => {
+    const [next, ...rest] = queue;
+
+    if (next) {
+      setCurrent(next);
+      setQueue(rest);
+    }
+  }
 
   return (
     <>
@@ -67,7 +80,9 @@ export default function Playing() {
         <audio controls autoPlay className="w-full mt-4 hidden" ref={player}
           onPlay={() => setState("playing")}
           onPause={() => setState("paused")}
-          onLoad={() => setState("playing")}       >
+          onLoad={() => setState("playing")}
+          onEnded={handleEnded}
+        >
           {current &&
             ["false", "true"].map((local) => (
               <Fragment key={local}>
@@ -97,7 +112,7 @@ export default function Playing() {
                 <div className="flex items-center p-4">
                   <img
                     src={`${instanceUrl}/vi/${current.videoId}/mqdefault.jpg`}
-                    className="w-20 h-20 rounded-lg object-cover shadow-md"
+                    className="w-20 h-20 rounded-lg object-cover shadow-lg"
                   />
                   <div className="flex flex-col ml-4 flex-1 w-0">
                     <span className="font-medium text-gray-900 truncate">
@@ -153,6 +168,8 @@ export default function Playing() {
                 )}
               </div>
             )}
+
+            <Queue />
           </Sheet.Content>
         </Sheet.Container>
       </Sheet>
