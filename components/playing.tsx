@@ -13,7 +13,6 @@ export default function Playing() {
   const [current] = useAtom(currentAtom);
 
   const [state, setState] = useState<State>("none");
-  const [seek, setSeek] = useState(0);
 
   const player = useRef<HTMLAudioElement>(null);
 
@@ -36,7 +35,7 @@ export default function Playing() {
   return (
     <>
       <button
-        className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200/30 backdrop-blur-lg rounded-t-lg"
+        className="absolute bottom-0 w-full flex flex-col border-t border-slate-200 bg-gray-200 rounded-t-lg"
         onClick={() => setOpen(true)}
       >
         {current && (
@@ -87,7 +86,7 @@ export default function Playing() {
         isOpen={open}
         onClose={() => setOpen(false)}
         initialSnap={1}
-        snapPoints={[0.8, 256]}
+        snapPoints={[0.85, 256]}
       >
         <Sheet.Container>
           <Sheet.Header />
@@ -97,7 +96,7 @@ export default function Playing() {
                 <div className="flex items-center p-4">
                   <img
                     src={`${instanceUrl}/vi/${current.videoId}/mqdefault.jpg`}
-                    className="w-20 h-20 rounded-lg object-cover "
+                    className="w-20 h-20 rounded-lg object-cover shadow-md"
                   />
                   <div className="flex flex-col ml-4 flex-1 w-0">
                     <span className="font-medium text-gray-900 truncate">
@@ -109,29 +108,32 @@ export default function Playing() {
                   </div>
                 </div>
 
-                <div className="px-6">
-                  <Seeker playerRef={player} />
-                </div>
-
-                <div className="flex justify-between w-full text-gray-800">
-                  <div />
-                  {state === "playing" && (
-                    <button className="" onClick={handlePause}>
-                      <PauseIcon className="w-10 h-10" />
-                    </button>
-                  )}
-                  {state === "paused" && (
-                    <button className="" onClick={handlePlay}>
-                      <PlayIcon className="w-10 h-10" />
-                    </button>
-                  )}
-                  {state === "loading" && (
-                    <div className="p-4">
-                      <Spinner />
+                {state === "loading" ? (
+                  <div className="w-full grid place-items-center p-4">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <>
+                    <div className="px-6">
+                      <Seeker playerRef={player} />
                     </div>
-                  )}
-                  <div />
-                </div>
+
+                    <div className="flex justify-between w-full text-gray-800">
+                      <div />
+                      {state === "playing" && (
+                        <button className="" onClick={handlePause}>
+                          <PauseIcon className="w-10 h-10" />
+                        </button>
+                      )}
+                      {state === "paused" && (
+                        <button className="" onClick={handlePlay}>
+                          <PlayIcon className="w-10 h-10" />
+                        </button>
+                      )}
+                      <div />
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </Sheet.Content>
