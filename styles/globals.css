@@ -5,3 +5,10 @@
 .react-modal-sheet-container {
   @apply bg-gray-200/70 backdrop-blur-lg !important;
 }
+
+@layer base {
+  * {
+    --tw-backdrop-sepia:  ;
+    --will-be-deleted: ; 
+  }
+}
