@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .react-modal-sheet-container {
-  @apply bg-gray-200/50 backdrop-blur-lg !important;
+  @apply bg-gray-300/50 backdrop-blur-lg !important;
 }
 
 @layer base {

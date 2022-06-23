@@ -1,12 +1,13 @@
 import { useAtom } from "jotai";
 import { Fragment, useEffect, useRef, useState } from "react";
 import Sheet from "react-modal-sheet";
-import { PlayIcon, PauseIcon } from "@heroicons/react/outline";
+import { PlayIcon, PauseIcon } from "@heroicons/react/solid";
 
 import { instanceUrl } from "services/api";
 import { currentAtom } from "store/current";
 import Spinner from "./spinner";
 import Seeker from "./seeker";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Playing() {
   const [open, setOpen] = useState(false);
@@ -120,16 +121,32 @@ export default function Playing() {
 
                     <div className="flex justify-between w-full text-gray-800">
                       <div />
-                      {state === "playing" && (
-                        <button className="" onClick={handlePause}>
-                          <PauseIcon className="w-10 h-10" />
-                        </button>
-                      )}
-                      {state === "paused" && (
-                        <button className="" onClick={handlePlay}>
-                          <PlayIcon className="w-10 h-10" />
-                        </button>
-                      )}
+                      <div className="relative w-10 h-10">
+                        <AnimatePresence >
+                          {state === "playing" && (
+                            <motion.button
+                              initial={{ scale: 0.5, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.5, opacity: 0 }}
+                              key="play"
+                              className="absolute cursor-auto"
+                              onClick={handlePause}>
+                              <PauseIcon className="text-gray-400 w-10 h-10" />
+                            </motion.button>
+                          )}
+                          {state === "paused" && (
+                            <motion.button
+                              initial={{ scale: 0.5, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.5, opacity: 0 }}
+                              key="pause"
+                              className="absolute cursor-auto"
+                              onClick={handlePlay}>
+                              <PlayIcon className="text-gray-400 w-10 h-10" />
+                            </motion.button>
+                          )}
+                        </AnimatePresence>
+                      </div >
                       <div />
                     </div>
                   </>
