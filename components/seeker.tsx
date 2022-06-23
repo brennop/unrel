@@ -92,30 +92,33 @@ export default function Seeker({ playerRef }: SeekerProps) {
     _event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
-    const ratio = (info.point.x - 0.5 * window.innerWidth) / barWidth + 0.5
+    let ratio = (info.point.x - 0.5 * window.innerWidth) / barWidth + 0.5
+    ratio = Math.max(Math.min(ratio, 1), 0)
     setSeek(ratio * duration);
   }
 
   return (
     <div className="">
       <div className="relative">
-        <motion.div
-          className="h-4 w-4 rounded-full bg-gray-50 z-10"
-          drag
-          whileTap={{ scale: 1.4 }}
-          animate={!seeking && { x: (seek / duration) * barWidth }}
-          dragConstraints={{
-            left: 0,
-            right: (barWidth) - 16,
-            top: 0,
-            bottom: 0,
-          }}
-          dragElastic={0}
-          dragMomentum={false}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-          onDragStart={() => setSeeking(true)}
-        />
+        {barWidth && (
+          <motion.div
+            className="h-4 w-4 rounded-full bg-gray-50 z-10"
+            drag
+            whileTap={{ scale: 1.4 }}
+            animate={!seeking && { x: (seek / duration) * barWidth - 8 }}
+            dragConstraints={{
+              left: 0,
+              right: (barWidth) - 8,
+              top: 0,
+              bottom: 0,
+            }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            onDragStart={() => setSeeking(true)}
+          />
+        )}
         <div className="absolute -z-10 inset-0 flex flex-col justify-center">
           <div
             className="w-full h-1 bg-gray-400 rounded-lg" ref={bar} />

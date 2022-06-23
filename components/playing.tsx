@@ -125,9 +125,9 @@ export default function Playing() {
                         <AnimatePresence >
                           {state === "playing" && (
                             <motion.button
-                              initial={{ scale: 0.5, opacity: 0 }}
+                              initial={{ scale: 0.2, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.5, opacity: 0 }}
+                              exit={{ scale: 0.2, opacity: 0 }}
                               key="play"
                               className="absolute cursor-auto"
                               onClick={handlePause}>
@@ -136,9 +136,9 @@ export default function Playing() {
                           )}
                           {state === "paused" && (
                             <motion.button
-                              initial={{ scale: 0.5, opacity: 0 }}
+                              initial={{ scale: 0.2, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.5, opacity: 0 }}
+                              exit={{ scale: 0.2, opacity: 0 }}
                               key="pause"
                               className="absolute cursor-auto"
                               onClick={handlePlay}>
