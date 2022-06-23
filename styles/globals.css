@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-modal-sheet-container {
+  @apply bg-gray-200/70 backdrop-blur-lg !important;
+}
