@@ -29,7 +29,7 @@ ${isSelected ? "bg-slate-100" : ""
           className="w-12 h-12 rounded-lg object-cover "
         />
         <div className="flex flex-col items-start ml-2 flex-1 w-0">
-          <div className="flex items-center">
+          <div className="flex items-center w-full">
             {isSelected && <Bars />}
             <span className="font-semibold text-gray-900 leading-snug text-left truncate w-full overflow-y-visible">
               {item.title}
