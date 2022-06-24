@@ -9,7 +9,7 @@ const trending = atom(async (get) =>
     .then((response) => response.data)
 );
 
-export default function Trending({ }) {
+export default function Trending({}) {
   const [videos] = useAtom(trending);
 
   return (
