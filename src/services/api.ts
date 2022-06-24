@@ -1,21 +1,7 @@
-import axios from "axios";
-
-export const instanceUrl = "https://inv.riverside.rocks";
-
-const instance = axios.create({
-  baseURL: instanceUrl,
-});
-
 export const getTrending = () => `api/v1/trending?type=Music&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
 
 export const searchVideos = (query: string) =>
-  instance
-    .get(
-      `api/v1/search?q=${query}&type=video&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
-    )
-    .then((response) => response.data);
+  `api/v1/search?q=${query}&type=video&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
 
-export const getRecommended = (videoId: string): Promise<VideoItem[]> =>
-  instance
-    .get(`api/v1/videos/${videoId}?fields=recommendedVideos`)
-    .then((response) => response.data.recommendedVideos);
+export const getRecommended = (videoId: string) =>
+  `api/v1/videos/${videoId}?fields=recommendedVideos`

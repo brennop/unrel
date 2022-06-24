@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { currentAtom } from "store/current";
-import { instanceUrl } from "services/api";
+import { instanceAtom } from "store/instance";
 import Bars from "./bars";
 import ItemMenu from "./menu";
 
@@ -10,6 +10,8 @@ type ListItemProps = {
 
 export default function ListItem({ item }: ListItemProps) {
   const [current, setCurrent] = useAtom(currentAtom);
+
+  const [instance] = useAtom(instanceAtom);
 
   const handleSelect = () => {
     setCurrent(item);
@@ -27,7 +29,7 @@ ${isSelected ? "bg-slate-100" : ""
       <div className="flex items-center w-full">
         <button className="flex items-center w-full" onClick={handleSelect}>
           <img
-            src={`${instanceUrl}/vi/${item.videoId}/mqdefault.jpg`}
+            src={`${instance.getUri()}/vi/${item.videoId}/mqdefault.jpg`}
             className="w-12 h-12 rounded-lg object-cover "
           />
           <div className="flex flex-col items-start ml-2 flex-1 w-0">

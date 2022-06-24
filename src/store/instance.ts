@@ -16,7 +16,6 @@ export const instancesAtom = atom(async () => {
 export const instanceAtom = atom<AxiosInstance>((get) => {
   const instances = get(instancesAtom);
   const [_name, instance] = getRandom(instances);
-  console.log(_name);
   return axios.create({
     baseURL: instance.uri,
   });
