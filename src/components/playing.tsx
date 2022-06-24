@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Queue from "./queue";
 import { queueAtom } from "store/queue";
 import { instanceAtom } from "store/instance";
+import ButtonAnimation from "./button_animation";
 
 export default function Playing() {
   const [queue, setQueue] = useAtom(queueAtom);
@@ -45,7 +46,7 @@ export default function Playing() {
       setCurrent(next);
       setQueue(rest);
     }
-  }
+  };
 
   return (
     <>
@@ -61,24 +62,31 @@ export default function Playing() {
             />
             <span className="font-medium truncate flex-1">{current.title}</span>
 
-            {state === "playing" && (
-              <button className="p-2" onClick={handlePause}>
-                <PauseIcon className="w-6 h-6" />
-              </button>
-            )}
-            {state === "paused" && (
-              <button className="p-2" onClick={handlePlay}>
-                <PlayIcon className="w-6 h-6" />
-              </button>
-            )}
-            {state === "loading" && (
+            {state === "loading" ? (
               <div className="p-2">
                 <Spinner />
               </div>
+            ) : (
+              <ButtonAnimation className="w-10 h-10 p-2 grid items-center">
+                {state === "playing" && (
+                  <button className="" onClick={handlePause}>
+                    <PauseIcon className="w-6 h-6" />
+                  </button>
+                )}
+                {state === "paused" && (
+                  <button className="" onClick={handlePlay}>
+                    <PlayIcon className="w-6 h-6" />
+                  </button>
+                )}
+              </ButtonAnimation>
             )}
           </div>
         )}
-        <audio controls autoPlay className="w-full mt-4 hidden" ref={player}
+        <audio
+          controls
+          autoPlay
+          className="w-full mt-4 hidden"
+          ref={player}
           onPlay={() => setState("playing")}
           onPause={() => setState("paused")}
           onLoad={() => setState("playing")}
@@ -88,11 +96,13 @@ export default function Playing() {
             ["false", "true"].map((local) => (
               <Fragment key={local}>
                 <source
-                  src={`${instance.getUri()}/latest_version?id=${current.videoId}&itag=140&local=${local}`}
+                  src={`${instance.getUri()}/latest_version?id=${current.videoId
+                    }&itag=140&local=${local}`}
                   type='audio/mp4; codecs="mp4a.40.2"'
                 />
                 <source
-                  src={`${instance.getUri()}/latest_version?id=${current.videoId}&itag=251&local=${local}`}
+                  src={`${instance.getUri()}/latest_version?id=${current.videoId
+                    }&itag=251&local=${local}`}
                   type='audio/webm; codecs="opus"'
                 />
               </Fragment>
@@ -112,7 +122,8 @@ export default function Playing() {
               <div>
                 <div className="flex items-center p-4">
                   <img
-                    src={`${instance.getUri()}/vi/${current.videoId}/mqdefault.jpg`}
+                    src={`${instance.getUri()}/vi/${current.videoId
+                      }/mqdefault.jpg`}
                     className="w-20 h-20 rounded-lg object-cover shadow-lg"
                   />
                   <div className="flex flex-col ml-4 flex-1 w-0">
@@ -137,32 +148,24 @@ export default function Playing() {
 
                     <div className="flex justify-between w-full text-gray-800">
                       <div />
-                      <div className="relative w-10 h-10">
-                        <AnimatePresence >
-                          {state === "playing" && (
-                            <motion.button
-                              initial={{ scale: 0.2, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.2, opacity: 0 }}
-                              key="play"
-                              className="absolute cursor-auto"
-                              onClick={handlePause}>
-                              <PauseIcon className="text-gray-400 w-10 h-10" />
-                            </motion.button>
-                          )}
-                          {state === "paused" && (
-                            <motion.button
-                              initial={{ scale: 0.2, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.2, opacity: 0 }}
-                              key="pause"
-                              className="absolute cursor-auto"
-                              onClick={handlePlay}>
-                              <PlayIcon className="text-gray-400 w-10 h-10" />
-                            </motion.button>
-                          )}
-                        </AnimatePresence>
-                      </div >
+                      <ButtonAnimation className="w-10 h-10 p-2 grid items-center">
+                        {state === "playing" && (
+                          <motion.button
+                            className="cursor-auto"
+                            onClick={handlePause}
+                          >
+                            <PauseIcon className="text-gray-400 w-10 h-10" />
+                          </motion.button>
+                        )}
+                        {state === "paused" && (
+                          <button
+                            className="cursor-auto"
+                            onClick={handlePlay}
+                          >
+                            <PlayIcon className="text-gray-400 w-10 h-10" />
+                          </button>
+                        )}
+                      </ButtonAnimation>
                       <div />
                     </div>
                   </>
