@@ -6,12 +6,7 @@ const instance = axios.create({
   baseURL: instanceUrl,
 });
 
-export const getTrending = () =>
-  instance
-    .get<VideoItem[]>(
-      `api/v1/trending?type=Music&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
-    )
-    .then((response) => response.data);
+export const getTrending = () => `api/v1/trending?type=Music&fields=title,author,videoId,lengthSeconds,publishedText,videoThumbnails`
 
 export const searchVideos = (query: string) =>
   instance

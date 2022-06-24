@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { getRecommended } from "services/api";
+import { getRandom } from "utils";
 import { queueAtom } from "./queue";
 
 const primitiveCurrentAtom = atom<VideoItem | null>(null);
@@ -14,8 +15,7 @@ export const currentAtom = atom<VideoItem | null, VideoItem>(
     // get a recommended video if queue is empty
     if (queue.length === 0) {
       getRecommended(newVideo.videoId).then((recommended) => {
-        const next =
-          recommended[Math.floor(Math.random() * recommended.length)];
+        const next = getRandom(recommended);
         set(queueAtom, (queue) => [...queue, next]);
       });
     }
