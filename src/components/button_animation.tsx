@@ -1,5 +1,5 @@
 import { AnimatePresence, HTMLMotionProps, motion } from "framer-motion";
-import { Children, ReactElement } from "react";
+import { Children, forwardRef, ReactElement } from "react";
 
 type ButtonAnimationChildren =
   | ReactElement<HTMLMotionProps<"button">>
@@ -12,12 +12,12 @@ type ButtonAnimationProps = {
   className?: string;
 };
 
-export default function ButtonAnimation({
+export default forwardRef<HTMLDivElement,  ButtonAnimationProps>(function ButtonAnimation({
   children,
   className,
-}: ButtonAnimationProps) {
+}, ref) {
   return (
-    <div className={`relative ${className ?? ""}`}>
+    <div className={`relative ${className ?? ""}`} ref={ref}>
       <AnimatePresence>
         {Children.map(
           children,
@@ -36,4 +36,4 @@ export default function ButtonAnimation({
       </AnimatePresence>
     </div>
   );
-}
+})

@@ -1,4 +1,8 @@
-import { HeartIcon, SortDescendingIcon, TrashIcon } from "@heroicons/react/solid";
+import {
+  HeartIcon,
+  SortDescendingIcon,
+  TrashIcon,
+} from "@heroicons/react/solid";
 import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { useAtom, useSetAtom } from "jotai";
 import { useMemo } from "react";
@@ -19,33 +23,43 @@ export default function ListItem({ item }: ListItemProps) {
 
   const [instance] = useAtom(instanceAtom);
 
-  const likeBg = useTransform(x, [-64, 0], ["rgb(239, 68, 68)", "rgb(75, 85, 99)"])
-  const queueBg = useTransform(x, [64, 0], ["rgb(139, 92, 246)", "rgb(75, 85, 99)"])
+  const likeBg = useTransform(
+    x,
+    [-64, 0],
+    ["rgb(239, 68, 68)", "rgb(75, 85, 99)"]
+  );
+  const queueBg = useTransform(
+    x,
+    [64, 0],
+    ["rgb(139, 92, 246)", "rgb(75, 85, 99)"]
+  );
 
   const handleSelect = () => {
     setCurrent(item);
   };
 
-  const isSelected = current?.videoId === item.videoId
+  const isSelected = current?.videoId === item.videoId;
 
   const setQueue = useSetAtom(queueAtom);
   const [favorites, setFavorites] = useAtom(favoritesAtom);
 
   const handleQueue = () => {
-    setQueue((queue) => [...queue, item])
-  }
+    setQueue((queue) => [...queue, item]);
+  };
 
   const isFavorite = useMemo(() => {
-    return !!favorites.find(favorite => favorite.videoId === item.videoId);
-  }, [favorites])
+    return !!favorites.find((favorite) => favorite.videoId === item.videoId);
+  }, [favorites]);
 
   const addToFavorites = () => {
-    setFavorites(favorites => [...favorites, item]);
-  }
+    setFavorites((favorites) => [...favorites, item]);
+  };
 
   const removeFromFavorites = () => {
-    setFavorites(favorites.filter(favorite => favorite.videoId !== item.videoId))
-  }
+    setFavorites(
+      favorites.filter((favorite) => favorite.videoId !== item.videoId)
+    );
+  };
 
   const handleDragEnd = (_: any, { offset }: PanInfo) => {
     if (offset.x <= -200) {
@@ -57,31 +71,30 @@ export default function ListItem({ item }: ListItemProps) {
     } else if (offset.x >= 200) {
       handleQueue();
     }
-  }
+  };
 
   return (
-    <li
-      className="relative border-b border-slate-200"
-    >
+    <li className="relative border-b border-slate-200">
       <motion.div
         style={{ background: likeBg }}
-        className="absolute inset-y-0 right-0 grid place-items-center p-4">
-        {isFavorite ?
+        className="absolute inset-y-0 right-0 grid place-items-center p-4"
+      >
+        {isFavorite ? (
           <TrashIcon className="w-8 h-8 text-white" />
-          :
+        ) : (
           <HeartIcon className="w-8 h-8 text-white" />
-        }
+        )}
       </motion.div>
       <motion.div
         style={{ background: queueBg }}
-        className="absolute inset-y-0 left-0 grid place-items-center p-4">
+        className="absolute inset-y-0 left-0 grid place-items-center p-4"
+      >
         <SortDescendingIcon className="w-8 h-8 text-white" />
       </motion.div>
       <motion.div
         className={`relative flex items-center hover:bg-gray-50 cursor-default px-2 py-1.5 
 leading-none
-${isSelected ? "bg-slate-100" : "bg-white"
-          }`}
+${isSelected ? "bg-slate-100" : "bg-white"}`}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
