@@ -1,36 +1,21 @@
 import { Menu, Transition } from "@headlessui/react"
 import { TrashIcon } from "@heroicons/react/outline";
 import { DotsHorizontalIcon, HeartIcon, SortDescendingIcon } from "@heroicons/react/solid";
-import { useAtom, useSetAtom } from "jotai";
-import { Fragment, useMemo } from "react";
-import { favoritesAtom } from "store/favorites";
-import { queueAtom } from "store/queue";
+import { Fragment } from "react";
 
 type MenuProps = {
-  video: VideoItem;
+  isFavorite: boolean;
+  addToFavorites: () => void;
+  removeFromFavorites: () => void;
+  handleQueue: () => void;
 }
 
 export default function ItemMenu({
-  video
+  isFavorite,
+  addToFavorites,
+  removeFromFavorites,
+  handleQueue
 }: MenuProps) {
-  const setQueue = useSetAtom(queueAtom);
-  const [favorites, setFavorites] = useAtom(favoritesAtom);
-
-  const handleQueue = () => {
-    setQueue((queue) => [...queue, video])
-  }
-
-  const isFavorite = useMemo(() => {
-    return !!favorites.find(favorite => favorite.videoId === video.videoId);
-  }, [favorites])
-
-  const addToFavorites = () => {
-    setFavorites(favorites => [...favorites, video]);
-  }
-
-  const removeFromFavorites = () => {
-    setFavorites(favorites.filter(favorite => favorite.videoId !== video.videoId))
-  }
 
   return <Menu as="div" className="relative inline-block text-left">
     <div>

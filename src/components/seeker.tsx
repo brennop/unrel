@@ -81,7 +81,6 @@ export default function Seeker({ playerRef }: SeekerProps) {
 
   const handleDragEnd = (
     _event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
   ) => {
     setSeeking(false);
 
