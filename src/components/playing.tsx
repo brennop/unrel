@@ -1,21 +1,22 @@
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Fragment, useEffect, useRef, useState } from "react";
 import Sheet from "react-modal-sheet";
-import { PlayIcon, PauseIcon } from "@heroicons/react/solid";
-
-import { currentAtom } from "store/current";
+import { PlayIcon, PauseIcon, FastForwardIcon, RewindIcon } from "@heroicons/react/solid";
+import { currentAtom, nextAtom } from "store/current";
 import Spinner from "./spinner";
 import Seeker from "./seeker";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Queue from "./queue";
 import { queueAtom } from "store/queue";
 import { instanceAtom } from "store/instance";
 import ButtonAnimation from "./button_animation";
+import { Title } from "./title";
 
 export default function Playing() {
   const [queue, setQueue] = useAtom(queueAtom);
   const [current, setCurrent] = useAtom(currentAtom);
   const [instance] = useAtom(instanceAtom);
+  const nextVideo = useSetAtom(nextAtom);
 
   const [open, setOpen] = useState(false);
 
@@ -48,6 +49,18 @@ export default function Playing() {
     }
   };
 
+  const handleNext = () => {
+    setState("loading");
+    player.current?.pause();
+    nextVideo();
+  }
+
+  const handleRewind = () => {
+    if (player.current) {
+      player.current.currentTime = 0;
+    }
+  }
+
   return (
     <>
       <button
@@ -58,9 +71,10 @@ export default function Playing() {
           <div className="p-2 flex items-center gap-2 text-gray-800 w-full">
             <img
               src={`${instance.getUri()}/vi/${current?.videoId}/mqdefault.jpg`}
-              className="w-12 h-12 rounded-lg object-cover"
+              className="w-12 h-12 rounded-lg object-cover z-10"
             />
-            <span className="font-medium truncate flex-1">{current.title}</span>
+
+            <Title value={current.title} />
 
             {state === "loading" ? (
               <div className="p-2">
@@ -124,7 +138,7 @@ export default function Playing() {
                   <img
                     src={`${instance.getUri()}/vi/${current.videoId
                       }/mqdefault.jpg`}
-                    className="w-20 h-20 rounded-lg object-cover shadow-lg"
+                    className="h-16 rounded-lg object-cover shadow-lg"
                   />
                   <div className="flex flex-col ml-4 flex-1 w-0">
                     <span className="font-medium text-gray-900 truncate">
@@ -146,8 +160,13 @@ export default function Playing() {
                       <Seeker playerRef={player} />
                     </div>
 
-                    <div className="flex justify-between w-full text-gray-800">
-                      <div />
+                    <div className="flex justify-between w-full text-gray-800 py-4 px-20">
+                      <motion.button
+                        whileTap={{ scale: 0.7 }}
+                        onClick={handleRewind}
+                      >
+                        <RewindIcon className="text-gray-400 w-10 h-10" />
+                      </motion.button>
                       <ButtonAnimation className="w-10 h-10 p-2 grid items-center">
                         {state === "playing" && (
                           <motion.button
@@ -158,21 +177,22 @@ export default function Playing() {
                           </motion.button>
                         )}
                         {state === "paused" && (
-                          <button
-                            className="cursor-auto"
-                            onClick={handlePlay}
-                          >
+                          <button className="cursor-auto" onClick={handlePlay}>
                             <PlayIcon className="text-gray-400 w-10 h-10" />
                           </button>
                         )}
                       </ButtonAnimation>
-                      <div />
+                      <motion.button
+                        whileTap={{ scale: 0.7 }}
+                        onClick={handleNext}
+                      >
+                        <FastForwardIcon className="text-gray-400 w-10 h-10" />
+                      </motion.button>
                     </div>
                   </>
                 )}
               </div>
             )}
-
             <Queue />
           </Sheet.Content>
         </Sheet.Container>

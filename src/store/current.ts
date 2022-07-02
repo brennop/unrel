@@ -28,3 +28,27 @@ export const currentAtom = atom<VideoItem | null, VideoItem>(
     }
   }
 );
+
+export const nextAtom = atom(null, async (get, set) => {
+  const current = get(currentAtom);
+  if (!current) return;
+
+  const queue = get(queueAtom);
+
+  if (queue.length > 0) {
+    const [next, ...rest] = queue;
+    set(currentAtom, next);
+    set(queueAtom, rest);
+  } else {
+    const instance = get(instanceAtom);
+    const response = await instance
+      .get<{ recommendedVideos: VideoItem[] }>(
+        getRecommended(current.videoId)
+      )
+
+    const recommended = response.data.recommendedVideos;
+    const next = getRandom(recommended);
+    set(currentAtom, next)
+  }
+
+})
