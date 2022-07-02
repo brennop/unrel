@@ -1,6 +1,7 @@
-import { XIcon } from "@heroicons/react/solid";
+import { MenuIcon, XIcon } from "@heroicons/react/solid";
 import { Reorder } from "framer-motion";
 import { useAtom } from "jotai";
+import { useState } from "react";
 
 import { currentAtom } from "store/current";
 import { queueAtom } from "store/queue";
@@ -8,6 +9,7 @@ import { queueAtom } from "store/queue";
 export default function Queue() {
   const [queue, setQueue] = useAtom(queueAtom);
   const [_, setCurrent] = useAtom(currentAtom);
+  const [draggable, setDraggable] = useState(false);
 
   const handleItem = (index: number) => {
     const item = queue.at(index)!;
@@ -33,6 +35,8 @@ export default function Queue() {
         <Reorder.Item
           key={item.videoId} className="flex w-full py-0.5 items-center text-gray-900"
           value={item}
+          dragListener={draggable}
+          onDragEnd={() => setDraggable(false)}
         >
 
           <button onClick={() => handleItem(index)}
@@ -45,8 +49,14 @@ export default function Queue() {
           <button className="p-2"
             onClick={() => handleRemove(index)}
           >
-            <XIcon className="w-3 h-3" />
+            <XIcon className="w-4 h-4" />
           </button>
+          <MenuIcon
+            className="w-4 h-4 cursor-grab"
+            onMouseEnter={() => setDraggable(true)}
+            onMouseLeave={() => setDraggable(false)}
+            onTouchStart={() => setDraggable(true)}
+          />
         </Reorder.Item>
       ))}
     </Reorder.Group>
